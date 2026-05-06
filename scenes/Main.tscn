@@ -1,0 +1,63 @@
+[gd_scene load_steps=8 format=3 uid="uid://mainscene"]
+
+[ext_resource type="PackedScene" path="res://scenes/Block.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/Player.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/Main.gd" id="3"]
+
+[sub_resource type="Environment" id="1"]
+background_mode = 2
+sky = null
+ambient_light_color = Color(0.47, 0.57, 0.7, 1)
+ambient_light_energy = 0.6
+
+[sub_resource type="PlaneMesh" id="2"]
+size = Vector2(180, 180)
+
+[sub_resource type="BoxShape3D" id="3"]
+size = Vector3(180, 1, 180)
+
+[node name="Main" type="Node3D"]
+script = ExtResource("3")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("1")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(25, -45, 0)
+light_energy = 1.0
+shadow_enabled = true
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("2")
+material_override = null
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+position = Vector3(0, -0.5, 0)
+shape = SubResource("3")
+
+[node name="World" type="Node3D" parent="."]
+
+[node name="Player" type="CharacterBody3D" parent="."]
+position = Vector3(0, 2, 5)
+script = ExtResource("2")
+block_scene = ExtResource("1")
+world_root_path = NodePath("../World")
+
+[sub_resource type="CapsuleShape3D" id="4"]
+radius = 0.35
+height = 1.2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("4")
+
+[node name="CameraPivot" type="Node3D" parent="Player"]
+position = Vector3(0, 1.6, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Player/CameraPivot"]
+current = true
+
+[node name="RayCast3D" type="RayCast3D" parent="Player/CameraPivot/Camera3D"]
+target_position = Vector3(0, 0, -6)
+collide_with_bodies = true
